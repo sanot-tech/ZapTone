@@ -17,6 +17,15 @@ from pathlib import Path
 from . import APP_NAME, APP_TAGLINE, __version__, probe
 from .core import Options, run_batch
 
+# 🪟 Windows consoles still use cp1252, which cannot print emoji.
+#    Reconfiguring stdout and stderr to UTF-8 fixes the crashes, and
+#    errors="replace" makes sure a strange symbol can never kill the app.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass  # 🧓 old Python, or a stream that is already fine
+
 # 🎨 colors, but only when a real terminal is on the other side
 _IS_TTY = sys.stdout.isatty()
 

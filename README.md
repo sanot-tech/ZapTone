@@ -221,12 +221,12 @@ sudo pacman -S librsvg imagemagick       # tools for the icons
 
 # 🪟 Windows → one exe
 python -m pip install pyinstaller
-pyinstaller --clean --noconfirm windows/zap_tone.spec
+pyinstaller --clean --noconfirm windows/zaptone.spec
 # → dist/ZapTone.exe
 
 # 🍎 macOS → .app
 python3 -m pip install pyinstaller
-pyinstaller --clean --noconfirm windows/zap_tone.spec
+pyinstaller --clean --noconfirm windows/zaptone.spec
 # → dist/ZapTone.app
 ```
 

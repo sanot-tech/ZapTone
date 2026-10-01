@@ -112,3 +112,34 @@ exe = EXE(
     entitlements_file=None,
     icon=None if not icon_arg else icon_arg[0],
 )
+
+# ══════════════════════════════════════════════════════════════════════
+# 🍎 macOS only: wrap the executable into ZapTone.app.
+#
+# Why this block exists: a plain EXE gives us a bare binary on macOS, and
+# hdiutil then fails with "create failed - No such file or directory"
+# because dist/ZapTone.app was never made. The BUNDLE call is what
+# creates the .app folder that macOS users double click.
+# ══════════════════════════════════════════════════════════════════════
+if sys.platform == "darwin":
+    app = BUNDLE(
+        exe,
+        name="ZapTone.app",
+        icon=None if not icon_arg else icon_arg[0],
+        bundle_identifier="tech.sanot.zaptone",
+        info_plist={
+            # 🍎 категория в «Программах»
+            "CFBundleName": "ZapTone",
+            "CFBundleDisplayName": "ZapTone",
+            "CFBundleInfoDictionaryVersion": "6.0",
+            "CFBundleShortVersionString": "0.1.0",
+            "CFBundleVersion": "0.1.0",
+            "CFBundlePackageType": "APPL",
+            "LSApplicationCategoryType": "public.app-category.music",
+            "NSHighResolutionCapable": True,
+            # 🖥️ мы просим нормальный вид окна (без скроллбаров-полосок)
+            "NSRequiresAquaSystemAppearance": False,
+            "LSMinimumSystemVersion": "10.15",
+            "CFBundleGetInfoString": "Turn any video into a clean MP3 file",
+        },
+    )

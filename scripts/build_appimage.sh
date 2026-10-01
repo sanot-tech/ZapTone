@@ -75,6 +75,10 @@ sed -e "s|^Exec=.*|Exec=AppRun|" \
     -e "s|^Icon=.*|Icon=zaptone|" \
     "$ROOT/linux/zaptone.desktop" > "$APPDIR/usr/share/applications/zaptone.desktop"
 
+# ⚠️ ВАЖНО: appimagetool ищет .desktop В КОРНЕ AppDir, без этого он пишет
+#    "Desktop file not found, aborting" и не собирает образ вообще.
+cp "$APPDIR/usr/share/applications/zaptone.desktop" "$APPDIR/zaptone.desktop"
+
 # ─── 🎨 иконки для hicolor-темы (KDE/GTK найдут их сами) ───
 if [[ -f "$ROOT/linux/zaptone.png" ]]; then
   cp "$ROOT/linux/zaptone.png" \
