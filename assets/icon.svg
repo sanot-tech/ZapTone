@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="ZapTone">
+  <!-- ═══════════════════════════════════════════════════════════════
+       ZapTone icon - one file, pure vector geometry.
+       Design: a film frame turns into a sound wave.
+       No raster, no filters, no AI noise. Scales to 16px and 1024px.
+       Palette: Plasma orange -> hot pink on a deep space background.
+       ═══════════════════════════════════════════════════════════════ -->
+
+  <defs>
+    <!-- 🌅 background: dark round square, the shape Linux and macOS expect -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b1f2b"/>
+      <stop offset="1" stop-color="#0d0f16"/>
+    </linearGradient>
+
+    <!-- 🔶 main gradient: orange to pink -->
+    <linearGradient id="accent" x1="0.1" y1="0.1" x2="0.9" y2="0.9">
+      <stop offset="0" stop-color="#ff8c42"/>
+      <stop offset="1" stop-color="#ff5f8d"/>
+    </linearGradient>
+
+    <!-- 🎨 the wave gets its own gradient, shifted left -->
+    <linearGradient id="wave" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ff5f8d"/>
+      <stop offset="1" stop-color="#ffb04c"/>
+    </linearGradient>
+
+    <!-- 🛡️ soft glow, one only, kept cheap so the icon stays fast -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- ✂️ a clip so the wave can spill out of the frame shape -->
+    <clipPath id="clipFrame">
+      <rect x="112" y="96" width="288" height="192" rx="34"/>
+    </clipPath>
+  </defs>
+
+  <!-- 🌑 background plate -->
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#bg)"/>
+  <!-- 🪟 thin top highlight, makes the plate feel like glass -->
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="none"
+        stroke="#ffffff" stroke-opacity="0.07" stroke-width="2"/>
+
+  <!-- 🎬 the film frame: a rounded rectangle with film holes -->
+  <g>
+    <rect x="112" y="96" width="288" height="192" rx="34" fill="#0b0d13"/>
+    <rect x="112" y="96" width="288" height="192" rx="34" fill="none"
+          stroke="url(#accent)" stroke-width="10"/>
+
+    <!-- 📽️ sprocket holes on the top and bottom edge -->
+    <g fill="#ff8c42" opacity="0.55">
+      <rect x="146" y="76"  width="34" height="16" rx="6"/>
+      <rect x="200" y="76"  width="34" height="16" rx="6"/>
+      <rect x="254" y="76"  width="34" height="16" rx="6"/>
+      <rect x="308" y="76"  width="34" height="16" rx="6"/>
+      <rect x="146" y="292" width="34" height="16" rx="6"/>
+      <rect x="200" y="292" width="34" height="16" rx="6"/>
+      <rect x="254" y="292" width="34" height="16" rx="6"/>
+      <rect x="308" y="292" width="34" height="16" rx="6"/>
+    </g>
+  </g>
+
+  <!-- 🔊 the sound wave inside the frame: rounded bars, tall in the middle -->
+  <g clip-path="url(#clipFrame)" filter="url(#glow)">
+    <g fill="url(#wave)">
+      <rect x="152" y="182" width="20" height="24" rx="10"/>
+      <rect x="188" y="158" width="20" height="72" rx="10"/>
+      <rect x="224" y="128" width="20" height="132" rx="10"/>
+      <rect x="260" y="150" width="20" height="88" rx="10"/>
+      <rect x="296" y="172" width="20" height="44" rx="10"/>
+      <rect x="332" y="188" width="20" height="16" rx="10"/>
+    </g>
+  </g>
+
+  <!-- ⚡ the zap: a small lightning bolt tucked in the corner, our "fast" mark.
+       It sits fully inside the frame so it never cuts the outline. -->
+  <g transform="translate(318 214) scale(0.56) rotate(10)">
+    <path d="M34 0 L0 62 H26 L14 108 L66 40 H38 L52 0 Z"
+          fill="url(#accent)" stroke="#0b0d13" stroke-width="10" stroke-linejoin="round"/>
+  </g>
+
+  <!-- 🎯 sound waves, two clean arcs in the bottom-left corner.
+       They stay inside the frame so the outline never gets cut. -->
+  <g fill="none" stroke="#ffb04c" stroke-width="11" stroke-linecap="round">
+    <path d="M78 196 a62 62 0 0 1 0 68" opacity="0.95"/>
+    <path d="M108 210 a32 32 0 0 1 0 40" opacity="0.6"/>
+  </g>
+</svg>
