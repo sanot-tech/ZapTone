@@ -40,6 +40,9 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq librsvg2-bin imagemagick
+          # 🎨 иконки строятся здесь, в Linux, где есть librsvg.
+          #    Windows не умеет рендерить SVG, поэтому ZapTone.ico
+          #    лежит в репозитории уже готовым.
           python3 scripts/make_icons.py
 
       - name: 📦 download appimagetool
@@ -96,13 +99,6 @@ jobs:
 
       - name: 🧪 run the tests
         run: python -m unittest discover -s tests -v
-
-      - name: 🎨 build the icons
-        shell: pwsh
-        run: |
-          # 🪟 Windows has no rsvg-convert, so we install cairosvg
-          python -m pip install --quiet cairosvg pillow
-          python scripts/make_icons_windows.py
 
       - name: 🔨 build the exe
         shell: pwsh

@@ -22,11 +22,18 @@ AppDir/
 appimage-builder.yml
 squashfs-root/
 
-# 🖼️ generated icons (they come from assets/icon.svg)
-assets/icons/
-*.ico
+# 🖼️ Generated PNG sizes (they come from assets/icon.svg with
+#    scripts/make_icons.py, so we do not keep every size in git).
+assets/icons/*.png
+
+# ⚠️ The .ico IS committed on purpose: PyInstaller on Windows cannot
+#    render SVG, and Windows runners have no librsvg. Committing one
+#    90 KB file is much better than shipping no icon at all.
+!assets/icons/ZapTone.ico
 *.icns
-*.png
+
+# 🖼️ brand and screenshots are real project files, keep them
+!assets/brand/*
 !assets/screenshots/*.png
 
 # 🎬 user media and test output
