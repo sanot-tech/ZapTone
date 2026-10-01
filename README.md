@@ -233,8 +233,11 @@ pyinstaller --clean --noconfirm windows/zaptone.spec
 Rebuild the icons after you change the SVG:
 
 ```bash
-python3 scripts/make_icons.py            # Linux
-python3 scripts/make_icons_windows.py   # Windows
+python3 scripts/make_icons.py     # Linux and macOS
+
+> 🪟 One file is committed on purpose: `assets/icons/ZapTone.ico`.
+> PyInstaller cannot render SVG and the Windows build machine has no
+> librsvg, so shipping one 64 KB file beats shipping no icon at all.
 ```
 
 Run the tests:

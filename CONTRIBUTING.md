@@ -65,7 +65,6 @@ attached as cover art. Now -vn is only added when there is no cover.
 One SVG is the source of truth: `assets/icon.svg`. Never commit a PNG by hand.
 
 ```bash
-python3 scripts/make_icons.py          # rebuild every size
 python3 scripts/make_icons.py     # rebuild every size and the .ico
 
 The PNG sizes are not in git, they get built from the SVG every time.
