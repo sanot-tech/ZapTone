@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  🪟 ZapTone Windows resource file.
+
+  What it gives us:
+    1. the icon inside the .exe file (taskbar, Alt-Tab, Explorer)
+    2. the version info in Windows properties (File -> Properties)
+    3. a manifest so Windows 10/11 use modern visual styles
+
+  Compile it with the Windows SDK tool:  rc /fo zap_tone.rc zap_tone.rc
+  PyInstaller picks the .exe up automatically from the dist folder.
+-->
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <assemblyIdentity version="0.1.0.0"
+                    processorArchitecture="*"
+                    name="ZapTone.VideoToMp3"
+                    type="win32"/>
+  <!-- 🖼️ иконка приложения -->
+  <description>ZapTone - turn any video into a clean MP3</description>
+  <application xmlns="urn:schemas-microsoft-com:asm.v3">
+    <windowsSettings>
+      <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+      <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+      <longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+    </windowsSettings>
+  </application>
+  <!-- 🛡️ просим Windows 10+ использовать общую тему (тёмные поля ввода) -->
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}"/> <!-- Windows 10/11 -->
+      <supportedOS Id="{1f676c76-80e1-4239-95bb-83d0f6d0da78}"/> <!-- Windows 8.1 -->
+      <supportedOS Id="{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}"/> <!-- Windows 8 -->
+      <supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}"/> <!-- Windows 7 -->
+    </application>
+  </compatibility>
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+    <security>
+      <requestedPrivileges>
+        <!-- 🚫 просим НЕ повышать права: приложению ffmpeg root не нужен -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false"/>
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+</assembly>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     Иконка. Путь считается относительно папки сборки.
+     Положи assets/icons/ZapTone.ico рядом с этим файлом.
+     ══════════════════════════════════════════════════════════════════ -->
+<iconfile name="zaptone.ico">
+  <resource id="1" type="16" name="16x16" language="1033"/>
+  <resource id="2" type="24" name="24x24" language="1033"/>
+  <resource id="3" type="32" name="32x32" language="1033"/>
+  <resource id="4" type="48" name="48x48" language="1033"/>
+  <resource id="5" type="64" name="64x64" language="1033"/>
+  <resource id="6" type="128" name="128x128" language="1033"/>
+  <resource id="7" type="256" name="256x256" language="1033"/>
+</iconfile>
+
+<!-- 🏷️ версия, которую показывает Windows в свойствах файла -->
+<assemblyIdentity xmlns="urn:schemas-microsoft-com:asm.v1"
+                  name="zaptone.icon"
+                  version="0.1.0.0"
+                  language="1033"/>
+
+<file>
+  <description>ZapTone application icon</description>
+  <name>zaptone.ico</name>
+</file>
+
+<versioninfo>
+  <assembly>
+    <name>ZapTone</name>
+    <productname>ZapTone</productname>
+    <fileversion>0.1.0.0</fileversion>
+    <prodversion>0.1.0.0</prodversion>
+    <companyname>ZapTone</companyname>
+    <legalcopyright>GPL-3.0-or-later</legalcopyright>
+    <comments>Turn any video into a clean MP3</comments>
+    <language>1033</language>
+  </assembly>
+  <varfile>
+    <type>FILEPADDING</type>
+    <hashalgo>SHA256</hashalgo>
+  </varfile>
+</versioninfo>

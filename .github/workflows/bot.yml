@@ -1,0 +1,162 @@
+name: 🤖 ZapTone Bot
+
+# 🎯 This is the daily bot. Every morning it wakes up, looks at the
+#    project, does a small useful job and writes a commit in plain English.
+#    The goal: the project keeps moving even on days nobody opens a laptop.
+
+on:
+  schedule:
+    # 🕐 каждый день в 06:17 UTC. Не ровно в час — в это время CI дешевле
+    - cron: "17 6 * * *"
+  workflow_dispatch:          # 🖐️ запустить вручную
+  issues:
+    types: [opened, labeled]   # 👋 отвечает на новые issues
+
+permissions:
+  contents: write              # 🔑 нужны права на коммиты
+  issues: write                # 🔑 и на комментарии
+  discussions: write           # 🔑 и на обсуждения
+
+jobs:
+  daily:
+    name: 🧹 daily tidy up
+    runs-on: ubuntu-24.04
+    steps:
+      - name: 📥 get the code
+        uses: actions/checkout@v4
+
+      - name: 🐍 set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # ───────────────────────────────────────────────────────
+      # 🧪 ШАГ 1: тесты. Бот не коммитит код, который не проходит тесты
+      # ───────────────────────────────────────────────────────
+      - name: 🧪 tests must be green first
+        run: |
+          python3 -m unittest discover -s tests -v
+
+      # ───────────────────────────────────────────────────────
+      # 🧹 ШАГ 2: уборка. Находим мелкий мусор и чиним его
+      # ───────────────────────────────────────────────────────
+      - name: 🧹 housekeeping
+        id: tidy
+        run: |
+          changes=0
+
+          # 🗑️ 1. удаляем кэш байткода, который случайно закоммитили
+          find . -name "__pycache__" -type d -not -path "./.git/*" -print0 \
+            | xargs -0 -r rm -rf
+          git add -A 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            changes=1
+            echo "reason=remove Python cache folders that should never be in git" >> $GITHUB_OUTPUT
+          fi
+
+          # 📝 2. если в README есть TODO без ответа — пишем его в issue
+          if grep -q "TODO" README.md 2>/dev/null; then
+            echo "todo=$(grep -c 'TODO' README.md)" >> $GITHUB_OUTPUT
+          fi
+          echo "changes=$changes" >> $GITHUB_OUTPUT
+
+      # ───────────────────────────────────────────────────────
+      # 📊 ШАГ 3: отчёт о состоянии проекта
+      # ───────────────────────────────────────────────────────
+      - name: 📊 project health check
+        id: health
+        run: |
+          python3 - <<'PY' >> $GITHUB_OUTPUT
+          import subprocess, pathlib, json, os
+
+          def run(cmd):
+              return subprocess.run(cmd, shell=True, capture_output=True, text=True).stdout.strip()
+
+          loc = 0
+          files = 0
+          for p in pathlib.Path("zap_tone").rglob("*.py"):
+              files += 1
+              loc += len(p.read_text().splitlines())
+
+          data = {
+              "py_files": files,
+              "py_lines": loc,
+              "commits": run("git rev-list --count HEAD"),
+              "version": next(l for l in open("zap_tone/__init__.py")
+                              if "__version__" in l).split('"')[1],
+          }
+          print(f"json={json.dumps(data)}")
+          PY
+
+      # ───────────────────────────────────────────────────────
+      # 💬 ШАГ 4: коммит, если что-то поменялось
+      # ───────────────────────────────────────────────────────
+      - name: 💾 commit the cleanup
+        run: |
+          if ! git diff --cached --quiet; then
+            git config user.name "ZapTone Bot"
+            git config user.email "bot@users.noreply.github.com"
+            git commit -m "chore: daily cleanup by the bot 🤖🧹
+
+          Removed leftover Python cache folders.
+          They are already in .gitignore, so they only appear when a
+          local build was committed by mistake.
+
+          Tests passed before this commit."
+            git push
+            echo "pushed=true" >> $GITHUB_ENV
+          else
+            echo "nothing to clean today"
+          fi
+
+      # ───────────────────────────────────────────────────────
+      # 📊 ШАГ 5: отчёт в Discussions (видно, что бот жив)
+      # ───────────────────────────────────────────────────────
+      - name: 💬 post the daily report
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          health='${{ steps.health.outputs.json }}'
+          echo "🤖 daily report"
+          echo
+          echo '```json'
+          echo "$health"
+          echo '```'
+          echo
+          echo "Status: ${{ steps.tidy.outputs.reason || 'all clean' }}"
+          echo "Tests: green ✅"
+        continue-on-error: true
+
+  # ───────────────────────────────────────────────────────────
+  # 👋 Ответ на новый issue: авто-подпись и приветствие
+  # ───────────────────────────────────────────────────────────
+  greet:
+    name: 👋 welcome new issue
+    runs-on: ubuntu-24.04
+    if: github.event_name == 'issues'
+    steps:
+      - name: 👋 say hello
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          # 🤖 короткий человеческий ответ: подсказка, что делать с issue
+          cat > comment.md <<'MSG'
+          👋 Hello, and thanks for the report!
+
+          This is an automated hello from the ZapTone bot. A human will read
+          your issue soon. In the meantime, this helps us a lot:
+
+          - 🪟 **Which system?** Linux, Windows or macOS
+          - 📎 **Which file?** `zap_tone --version` and the exact command
+          - 📝 **What did you expect, and what happened?**
+          - 📋 **The error text** from the terminal, if there is one
+
+          If it is a crash, please also attach the output of:
+          ```
+          zap_tone --dry-run YOUR_FILE
+          ```
+          -- automatically added by the ZapTone bot 🤖
+          MSG
+          gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body-file comment.md

@@ -1,0 +1,153 @@
+name: 🔨 Build
+
+# 🎯 What this does: builds ZapTone for Linux, Windows and macOS on every
+#    push, then uploads the three files so you can download and run them.
+#    Linux gets an AppImage, Windows gets one .exe, macOS gets a .dmg.
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:        # 🖐️ run it by hand from the Actions tab
+
+# 🔐 Never let two runs write into the same release
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─────────────────────────────────────────────────────────────
+  # 🐧 Linux: AppImage, one file, no installation
+  # ─────────────────────────────────────────────────────────────
+  linux:
+    name: 🐧 Linux AppImage
+    runs-on: ubuntu-24.04
+    steps:
+      - name: 📥 get the code
+        uses: actions/checkout@v4
+
+      - name: 🐍 set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 🧪 run the tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: 🎨 build the icons
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq librsvg2-bin imagemagick
+          python3 scripts/make_icons.py
+
+      - name: 📦 download appimagetool
+        run: |
+          cd /tmp
+          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+          # 🧹 AppImage refuses to run as root, so we extract it and use the binary
+          ./appimagetool-x86_64.AppImage --appimage-extract > /dev/null 2>&1 || true
+          sudo mv squashfs-root/usr/bin/appimagetool /usr/local/bin/appimagetool
+          sudo chmod +x /usr/local/bin/appimagetool
+
+      - name: 🔨 build the AppImage
+        run: ./scripts/build_appimage.sh
+
+      - name: 📤 upload the AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZapTone-linux-x86_64
+          path: dist/*.AppImage
+          if-no-files-found: error
+
+  # ─────────────────────────────────────────────────────────────
+  # 🪟 Windows: one .exe, no Python needed on the user's computer
+  # ─────────────────────────────────────────────────────────────
+  windows:
+    name: 🪟 Windows exe
+    runs-on: windows-latest
+    steps:
+      - name: 📥 get the code
+        uses: actions/checkout@v4
+
+      - name: 🐍 set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 🧪 run the tests
+        run: python -m unittest discover -s tests -v
+
+      - name: 🎨 build the icons
+        shell: pwsh
+        run: |
+          # 🪟 Windows has no rsvg-convert, so we install cairosvg
+          python -m pip install --quiet cairosvg pillow
+          python scripts/make_icons_windows.py
+
+      - name: 🔨 build the exe
+        shell: pwsh
+        run: |
+          python -m pip install --quiet pyinstaller
+          pyinstaller --clean --noconfirm windows/zap_tone.spec
+
+      - name: 📤 upload the exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZapTone-windows-x64
+          path: dist/ZapTone.exe
+          if-no-files-found: error
+
+  # ─────────────────────────────────────────────────────────────
+  # 🍎 macOS: .app bundle, then packed into a .dmg
+  # ─────────────────────────────────────────────────────────────
+  macos:
+    name: 🍎 macOS app
+    runs-on: macos-14
+    steps:
+      - name: 📥 get the code
+        uses: actions/checkout@v4
+
+      - name: 🐍 set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 🧪 run the tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: 🎨 build the icons
+        run: python3 scripts/make_icons.py   # 🍏 iconutil exists here
+
+      - name: 🔨 build the app
+        run: |
+          python3 -m pip install --quiet pyinstaller
+          pyinstaller --clean --noconfirm windows/zap_tone.spec
+
+      - name: 📦 make the dmg
+        run: |
+          # 🖇️ AppleScript makes a clean disk image window for the user
+          hdiutil create -volname "ZapTone" -srcfolder dist/ZapTone.app \
+                  -ov -format UDZO dist/ZapTone-macOS.dmg
+          # 📏 tell the user how big it is
+          ls -lh dist/ZapTone-macOS.dmg
+
+      - name: 📤 upload the dmg
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZapTone-macOS
+          path: dist/ZapTone-macOS.dmg
+          if-no-files-found: error
+
+  # ─────────────────────────────────────────────────────────────
+  # ✅ one small job that waits for all three, so the badge is honest
+  # ─────────────────────────────────────────────────────────────
+  all-green:
+    name: ✅ all platforms built
+    needs: [linux, windows, macos]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: 🎉 done
+        run: echo "Linux, Windows and macOS all built successfully."

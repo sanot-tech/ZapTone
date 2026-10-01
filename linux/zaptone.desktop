@@ -1,0 +1,18 @@
+[Desktop Entry]
+# 🐧 ZapTone menu entry for KDE, GNOME, XFCE and every other desktop.
+# Same name on every system, so users find it in the launcher.
+Type=Application
+Version=1.5
+Name=ZapTone
+GenericName=Video to MP3 converter
+Comment=Turn any video into a clean MP3 file, fast
+Icon=zaptone
+Exec=zaptone
+TryExec=zaptone
+Terminal=false
+Categories=AudioVideo;Audio;AudioVideoEditing;Player;
+Keywords=mp3;convert;audio;extract;video;ffmpeg;converter;rip;music;
+MimeType=video/mp4;video/x-matroska;application/x-matroska;video/webm;video/quicktime;video/x-msvideo;video/mpeg;video/x-ms-wmv;video/x-flv;video/mp2t;video/x-m4v;video/3gpp;video/ogg;
+StartupNotify=true
+StartupWMClass=ZapTone
+X-KDE-StartupNotify=true

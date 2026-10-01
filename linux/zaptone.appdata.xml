@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  📦 AppStream metadata for ZapTone.
+  This is what GNOME Software, KDE Discover and Flathub read.
+  Without it the app looks broken in software centres.
+-->
+<component type="desktop-application">
+  <id>org.zaptone.ZapTone</id>
+
+  <!-- 🏷️ name and summary, keep the summary under 40 characters -->
+  <name>ZapTone</name>
+  <summary>Turn any video into a clean MP3</summary>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+
+  <!-- 📝 long description, simple English -->
+  <description>
+    <p>
+      ZapTone takes the sound out of your video files and saves it as MP3.
+      It is fast, small and does not upload anything anywhere.
+    </p>
+    <p>What it can do:</p>
+    <ul>
+      <li>Bitrate from 96 to 320 kbps, or VBR mode</li>
+      <li>Cover art taken from a frame of the video</li>
+      <li>Tags read from the file name, for example
+          "Artist - Album - Song (2024) [Live].mp4"</li>
+      <li>Even volume for all tracks, so nothing is too quiet</li>
+      <li>Cut the silence at the start and at the end</li>
+      <li>Convert many files at once</li>
+      <li>Works in a window or in the terminal</li>
+    </ul>
+    <p>
+      ZapTone needs ffmpeg on your computer. Almost every Linux already has it.
+    </p>
+  </description>
+
+  <!-- 🖼️ screenshots: the app icon and the window -->
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/sanot-tech/ZapTone/main/assets/screenshots/window.png</image>
+      <caption>The main window with a file queue</caption>
+    </screenshot>
+  </screenshots>
+
+  <!-- 🔗 links -->
+  <url type="homepage">https://github.com/sanot-tech/ZapTone</url>
+  <url type="bugtracker">https://github.com/sanot-tech/ZapTone/issues</url>
+  <url type="help">https://github.com/sanot-tech/ZapTone/blob/main/README.md</url>
+  <url type="donation">https://github.com/sponsors/sanot-tech</url>
+
+  <!-- 🏷️ search tags for software centres -->
+  <categories>
+    <category>AudioVideo</category>
+    <category>AudioVideoEditing</category>
+    <category>Audio</category>
+  </categories>
+
+  <keywords>
+    <keyword>mp3</keyword>
+    <keyword>convert</keyword>
+    <keyword>audio</keyword>
+    <keyword>extract</keyword>
+    <keyword>ffmpeg</keyword>
+  </keywords>
+
+  <!-- 📐 how well it works on a big screen -->
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+    <control>pointing-and-keyboard</control>
+  </supports>
+
+  <requires>
+    <display_length compare="ge">720</display_length>
+  </requires>
+
+  <!-- 📚 license -->
+  <content_rating type="oars-1.1"/>
+
+  <releases>
+    <release version="0.1.0" date="2026-10-01">
+      <description>
+        <p>First release. Window mode, terminal mode, cover art and tags.</p>
+      </description>
+    </release>
+  </releases>
+</component>

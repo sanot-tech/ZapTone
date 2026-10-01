@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  🍎 Info.plist for the macOS bundle.
+
+  PyInstaller uses this file when it builds ZapTone.app.
+  It sets the bundle identifier, the icon and the minimum macOS version.
+-->
+<plist version="1.0">
+<dict>
+  <!-- 🏷️ идентификатор: обратный домен, как требует Apple -->
+  <key>CFBundleIdentifier</key>
+  <string>tech.sanot.zaptone</string>
+
+  <key>CFBundleName</key>
+  <string>ZapTone</string>
+
+  <key>CFBundleDisplayName</key>
+  <string>ZapTone</string>
+
+  <key>CFBundleExecutable</key>
+  <string>ZapTone</string>
+
+  <key>CFBundleIconFile</key>
+  <string>ZapTone.icns</string>
+
+  <key>CFBundleShortVersionString</key>
+  <string>0.1.0</string>
+
+  <key>CFBundleVersion</key>
+  <string>0.1.0</string>
+
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+
+  <!-- 📝 описание, которое видит пользователь в Finder -->
+  <key>CFBundleGetInfoString</key>
+  <string>Turn any video into a clean MP3 file</string>
+
+  <key>CFBundleInfoDictionaryVersion</key>
+  <string>6.0</string>
+
+  <!-- 🏠 категория в Mac App Store-стиле -->
+  <key>LSApplicationCategoryType</key>
+  <string>public.app-category.music</string>
+
+  <!-- 🚫 не показывать Dock-иконку лишний раз при запуске из Finder -->
+  <key>LSUIElement</key>
+  <false/>
+
+  <!-- 🪟 минимальная версия macOS: 10.15 Catalina -->
+  <key>LSMinimumSystemVersion</key>
+  <string>10.15</string>
+
+  <key>NSHumanReadableCopyright</key>
+  <string>GPL-3.0-or-later. ffmpeg is used as a separate program.</string>
+
+  <!-- 🎨 тёмная панель инструментов, окно выглядит современно -->
+  <key>NSRequiresAquaSystemAppearance</key>
+  <false/>
+
+  <!-- 📦 при сборке universal2 -->
+  <key>LSArchitecturePriority</key>
+  <array>
+    <string>arm64</string>
+    <string>x86_64</string>
+  </array>
+</dict>
+</plist>

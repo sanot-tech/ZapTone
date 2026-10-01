@@ -1,0 +1,15 @@
+[Desktop Entry]
+# 🐬 Dolphin context menu entry.
+# Right click any video in Dolphin and you get this item.
+# Drop it in:  ~/.local/share/dolphin/service-menus/
+Type=Application
+Name=ZapTone — convert to MP3
+GenericName=Video to MP3 converter
+Comment=Fast MP3 from any video, right here in your file manager
+Icon=zaptone
+Exec=zaptone %F
+MimeType=video/mp4;video/x-matroska;application/x-matroska;video/webm;video/quicktime;video/x-msvideo;video/mpeg;video/x-ms-wmv;video/x-flv;video/mp2t;video/x-m4v;video/3gpp;video/ogg;
+Terminal=false
+NoDisplay=false
+Categories=AudioVideo;
+X-KDE-Priority=TopLevel

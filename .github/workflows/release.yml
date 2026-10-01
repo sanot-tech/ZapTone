@@ -1,0 +1,86 @@
+name: 🚀 Release
+
+# 🎯 This workflow runs when you push a tag like v0.1.0.
+#    It takes the three files from the Build workflow and publishes
+#    them in a GitHub Release, so people can download with one click.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write      # 🔑 we need to write releases
+
+jobs:
+  release:
+    name: 📦 publish release
+    runs-on: ubuntu-24.04
+    steps:
+      - name: 📥 get the code
+        uses: actions/checkout@v4
+
+      - name: 🏷️ read the version from the tag
+        id: version
+        run: echo "tag=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+
+      - name: 📝 write the release notes
+        id: notes
+        run: |
+          # 📚 берём свежие записи из CHANGELOG.md (раздел под этот тег)
+          version="${{ steps.version.outputs.tag }}"
+          {
+            echo "## Thanks for using ZapTone $version!"
+            echo
+            echo "Download the file for your system:"
+            echo
+            echo "| System | File | Size |"
+            echo "|---|---|---|"
+            echo "| 🐧 Linux | \`ZapTone-linux-x86_64.AppImage\` | one file, just run it |"
+            echo "| 🪟 Windows | \`ZapTone-windows-x64.exe\` | double click, no Python needed |"
+            echo "| 🍎 macOS | \`ZapTone-macOS.dmg\` | drag into Applications |"
+            echo
+            echo "### What is in this release"
+            echo
+            awk "/^## $version/{flag=1;next} /^## /{flag=0} flag" CHANGELOG.md || echo "_see CHANGELOG.md_"
+            echo
+            echo "---"
+            echo "ZapTone needs **ffmpeg** on your computer. Almost every Linux already has it."
+          } > notes.md
+          cat notes.md
+
+      - name: 📦 wait for the three builds
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: 📊 checksums
+        run: |
+          # 🔐 SHA256 lets people check the file is not broken
+          cd artifacts
+          find . -type f \( -name "*.AppImage" -o -name "*.exe" -o -name "*.dmg" \) \
+            -exec sha256sum {} \; > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: 🚀 create the release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "ZapTone ${{ steps.version.outputs.tag }}"
+          tag_name: ${{ steps.version.outputs.tag }}
+          body_path: notes.md
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-rc') || contains(github.ref_name, '-beta') }}
+          files: |
+            artifacts/**/*ZapTone*.AppImage
+            artifacts/**/*ZapTone*.exe
+            artifacts/**/*ZapTone*.dmg
+            artifacts/SHA256SUMS.txt
+          body: ${{ steps.notes.outputs.notes }}
+
+      - name: 🔔 post the news in Discussions
+        run: |
+          # 💬 анонс релиза в обсуждения — один вызов API, без токена
+          gh api "repos/${{ github.repository }}/discussions" \
+            -f title="ZapTone ${{ steps.version.outputs.tag }} is out 🎉" \
+            -f body="New release is ready. Linux, Windows and macOS builds are attached above." \
+            -f category=Announcements 2>/dev/null || echo "💬 Discussions not enabled yet, skipping"
