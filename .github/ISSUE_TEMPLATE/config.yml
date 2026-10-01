@@ -1,0 +1,12 @@
+# 🎛️ Настройки шаблонов issues для ZapTone
+blank_issues_enabled: true          # ✅ разрешаем обычные issue без шаблона
+contact_links:
+  - name: 💬 Question or idea
+    url: https://github.com/sanot-tech/ZapTone/discussions
+    about: Ask a question or share an idea
+  - name: ❓ How to use
+    url: https://github.com/sanot-tech/ZapTone/blob/main/README.md#-use
+    about: Read the usage guide first, it may already answer it
+  - name: 🔒 Security problem
+    url: https://github.com/sanot-tech/ZapTone/security/advisories/new
+    about: Report a vulnerability privately

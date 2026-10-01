@@ -12,13 +12,44 @@ the app looks the same on every computer.
 from __future__ import annotations
 
 import queue
+import sys
 import threading
-import tkinter as tk
 from pathlib import Path
-from tkinter import filedialog, messagebox, ttk
 
 from . import APP_NAME, APP_TAGLINE, VIDEO_EXTENSIONS, __version__, probe
 from .core import Options, run_batch
+
+# 🧠 tkinter can break in three different ways, and each one needs its own fix:
+#      1. the python-tk package is not installed        -> install it
+#      2. tk is installed but a system library is gone   -> install tk itself
+#      3. tkinter works, but there is no screen          -> run in terminal mode
+# We catch all of them here, so the user gets advice instead of a traceback.
+TK_ERROR: str | None = None
+try:
+    import tkinter as tk
+    from tkinter import filedialog, messagebox, ttk
+except Exception as exc:                        # 🧯 any broken tk install
+    tk = None                                   # 🛑 type: ignore[assignment]
+    ttk = filedialog = messagebox = None        # 🛑 nothing can be built
+    TK_ERROR = f"{exc.__class__.__name__}: {exc}"
+
+# 📋 the fix message, printed when the window cannot start
+TK_HELP = """🖥️ The ZapTone window needs tkinter, and it does not work here.
+
+What went wrong:
+  {error}
+
+How to fix it:
+
+  🐧 Arch / CachyOS:   sudo pacman -S python-tk tk
+  🐧 Debian / Ubuntu:  sudo apt install python3-tk
+  🍎 macOS:            brew install python-tkinter tk
+  🪟 Windows:          python -m pip install tk
+
+Then start ZapTone again.
+
+💡 The terminal mode works right now and needs none of this:
+      zaptone YOUR_VIDEO.mp4"""
 
 # 🎨 our little design system. One place to change the look.
 BG = "#12141c"           # 🌑 window background
@@ -346,14 +377,21 @@ class ZapToneApp:
 
 def run_gui(initial_files: list[str] | None = None) -> int:
     """🪟 Create the window and run the event loop. This is the app entry point."""
+
+    # 🧠 no tkinter at all -> print how to fix it and stop.
+    # Exit code 2 means "this is a setup problem", so scripts can react to it.
+    if tk is None:
+        print(TK_HELP.format(error=TK_ERROR or "tkinter is missing"), file=sys.stderr)
+        return 2
+
     try:
         root = tk.Tk()
-    except tk.TclError as exc:
-        # 🖥️ no display (headless server or missing tk) -> tell the user what to do
-        print(f"❌ cannot open a window: {exc}")
-        print("   Install tk:  sudo pacman -S tk    (Debian: sudo apt install python3-tk)")
-        print(f"   Or use the terminal mode:  zap_tone <file>")
-        return 1
+    except Exception as exc:
+        # 🖥️ no display at all: a server, or a Wayland session without XWayland
+        print(f"❌ cannot open a window: {exc}", file=sys.stderr)
+        print("   Tip: use the terminal mode instead:  zaptone YOUR_VIDEO.mp4", file=sys.stderr)
+        return 2
+
     ZapToneApp(root, initial_files)
     root.mainloop()
     return 0
