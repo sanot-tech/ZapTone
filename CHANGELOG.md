@@ -25,7 +25,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/).
 - 🐧 🪟 🍏 Builds for Linux (AppImage), Windows (.exe) and macOS (.dmg)
 - 🐬 A Dolphin right click menu entry
 - 🎨 One SVG icon that renders into every size, plus .ico and .icns
-- 🧪 29 unit tests that need no ffmpeg to run
+- 🧪 31 unit tests that need no ffmpeg to run
 
 ### 🐛 Fixed along the way
 

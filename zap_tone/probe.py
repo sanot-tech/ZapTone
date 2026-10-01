@@ -52,12 +52,22 @@ def ffmpeg_bin() -> str:
     return shutil.which("ffmpeg") or "ffmpeg"
 
 
+def ffprobe_bin() -> str:
+    """📍 Path to ffprobe, or just the name if we cannot find it.
+
+    Same idea as ffmpeg_bin(): reading metadata must not crash when the
+    tools are missing, it just returns "no information". The strict check
+    stays in check_tools(), which convert_job() calls for real work.
+    """
+    return shutil.which("ffprobe") or "ffprobe"
+
+
 @lru_cache(maxsize=4096)
 def probe_json(path: str) -> dict:
     """📦 Read all stream info as JSON. Cached, because it never changes for a file."""
-    _, ffprobe = check_tools()
+    # 📍 soft check on purpose: with no ffprobe we simply report "no information"
     cmd = [
-        ffprobe, *_PROBE_QUIET,
+        ffprobe_bin(), *_PROBE_QUIET,
         "-print_format", "json",
         "-show_format", "-show_streams",
         path,

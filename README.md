@@ -262,7 +262,7 @@ assets/              🎨 the SVG icon and AI prompts
 linux/               🐧 desktop and Dolphin files
 windows/             🪟 PyInstaller recipe and resource file
 macos/               🍎 Info.plist
-tests/               🧪 29 tests, no ffmpeg needed
+tests/               🧪 31 tests, no ffmpeg needed
 .github/workflows/   🤖 build, release and the daily bot
 ```
 

@@ -207,6 +207,36 @@ class TestCommand(unittest.TestCase):
         """✍️ Players need the Xing header to seek properly."""
         self.assertIn("-write_xing", build_command(make_job(self.src, Options())))
 
+    def test_build_command_without_ffmpeg(self):
+        """🛡️ Building a command must work on a computer with no ffmpeg.
+
+        A real regression test. GitHub runners have no ffmpeg, and the
+        first CI run failed for exactly this reason: building the command
+        called the strict tool check. Building is soft now, and the strict
+        check only happens right before a real convert.
+        """
+        from unittest import mock
+        from zap_tone import probe
+
+        with mock.patch.object(probe, "check_tools", side_effect=probe.ToolMissing("no ffmpeg")), \
+             mock.patch("shutil.which", return_value=None):
+            cmd = build_command(make_job(self.src, Options(cover=True, normalize=True)))
+        # 📍 we fall back to the plain command name, so ffmpeg is found at run time
+        self.assertEqual(cmd[0], "ffmpeg")
+        self.assertIn("libmp3lame", cmd)
+
+    def test_probe_without_ffprobe(self):
+        """🛡️ Reading metadata must not crash when ffprobe is missing."""
+        from unittest import mock
+        from zap_tone import probe
+
+        with mock.patch("shutil.which", return_value=None):
+            self.assertEqual(probe.duration(self.src), 0.0)
+            self.assertFalse(probe.has_audio(self.src))
+            self.assertEqual(probe.source_tags(self.src), {})
+            self.assertEqual(probe.video_size(self.src), (0, 0))
+        probe.clear_cache()                      # 🧹 do not leak fake results
+
     def test_target_helper(self):
         """📦 target_path does simple name work."""
         self.assertEqual(target_path(Path("/a/b/c.mkv")).name, "c.mp3")
