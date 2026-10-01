@@ -58,12 +58,16 @@ That is all. No account, no upload to a server, no watermark.
 Grab the file for your system from the
 [Releases page](https://github.com/sanot-tech/ZapTone/releases):
 
-| System | File | What you do |
-|---|---|---|
-| 🐧 Linux | `ZapTone-x.y.z-x86_64.AppImage` | right click → *Allow running* → double click |
-| 🪟 Windows | `ZapTone-windows-x64.exe` | double click, it just runs |
-| 🍎 macOS | `ZapTone-macOS.dmg` | drag into *Applications* |
-| 🐍 Any | `zaptone.py` | run with Python 3 |
+| System | File | Size | What you do |
+|---|---|---|---|
+| 🐧 Linux | `ZapTone-0.1.0-x86_64.AppImage` | **242 KB** | right click → *Allow running* → double click |
+| 🪟 Windows | `ZapTone.exe` | 12 MB | double click, it just runs |
+| 🍎 macOS | `ZapTone-macOS.dmg` | 11 MB | drag into *Applications* |
+| 🐍 Any | `zaptone.py` | 20 KB | run with Python 3 |
+
+**Why is the AppImage 50 times smaller?** Because it holds only our code.
+Python and ffmpeg are already on your computer. The Windows and macOS files
+carry their own Python, because on those systems it usually is not there.
 
 **You also need ffmpeg.** Almost every Linux and macOS already has it.
 
