@@ -66,7 +66,12 @@ One SVG is the source of truth: `assets/icon.svg`. Never commit a PNG by hand.
 
 ```bash
 python3 scripts/make_icons.py          # rebuild every size
-python3 scripts/make_icons_windows.py  # same, on a Windows machine
+python3 scripts/make_icons.py     # rebuild every size and the .ico
+
+The PNG sizes are not in git, they get built from the SVG every time.
+`assets/icons/ZapTone.ico` **is** in git, because the Windows build
+cannot make it on its own (no librsvg on a clean Windows machine).
+If you change the icon, run the script and commit the new .ico too.
 ```
 
 ## 🐛 Reporting a bug
