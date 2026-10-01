@@ -85,6 +85,11 @@ cp "$APPDIR/usr/share/applications/zaptone.desktop" "$APPDIR/zaptone.desktop"
 if [[ -f "$ROOT/linux/zaptone.png" ]]; then
   cp "$ROOT/linux/zaptone.png" \
      "$APPDIR/usr/share/icons/hicolor/256x256/apps/zaptone.png"
+# ⚠️ appimagetool требует иконку прямо в корне AppDir, иначе он пишет
+#    "zaptone{.png,.svg,.xpm} defined in desktop file but not found" и падает.
+#    SVG кладём рядом тоже: на некоторых темах он выглядит чётче PNG.
+  cp "$ROOT/linux/zaptone.png" "$APPDIR/zaptone.png"
+  [[ -f "$ROOT/assets/icon.svg" ]] && cp "$ROOT/assets/icon.svg" "$APPDIR/zaptone.svg"
 fi
 
 # ─── 📦 метаинфо (нужно для GNOME Software / KDE Discover) ───
