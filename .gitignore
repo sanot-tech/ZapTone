@@ -1,0 +1,49 @@
+# 🧠 Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# 📦 build output
+build/
+dist/
+*.spec.bak
+*.onefile
+__pypackages__/
+
+# 🐧 AppImage build
+AppDir/
+*.AppImage
+.zsync
+appimage-builder.yml
+squashfs-root/
+
+# 🖼️ generated icons (they come from assets/icon.svg)
+assets/icons/
+*.ico
+*.icns
+*.png
+!assets/screenshots/*.png
+
+# 🎬 user media and test output
+*.mp3
+*.m4a
+*.tmp
+zaptone-test-*/
+
+# 🗒️ logs and editor files
+*.log
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# 🤖 secrets - never commit these
+.env
+*.token
+credentials.json
