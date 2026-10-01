@@ -1,8 +1,7 @@
 <div align="center">
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/sanot-tech/social-preview/main/zaptone.png"
-       alt="ZapTone — turn any video into a clean MP3" width="100%">
+  <img src="assets/brand/logo-full.png" alt="ZapTone — video to MP3 converter" width="400">
 </p>
 
 ```
@@ -293,6 +292,20 @@ ZapTone is young and needs hands.
 
 **A good bug report has:** your system, the exact command, and the error text.
 Try `zaptone --dry-run YOUR_FILE` first.
+
+---
+
+## 🎨 Brand
+
+| File | What it is |
+|---|---|
+| `assets/brand/logo-full.png` | the full logo, used in this README |
+| `assets/brand/logo-mark.png` | just the mark: frame, zap, note |
+| `assets/icon.svg` | the app icon in vector form |
+
+The app icon is a redraw of the logo mark in pure vector, so it stays
+sharp from 16 px to 1024 px. The logo itself stays a picture, because a
+photo-like logo has too much detail to survive a 16 px taskbar icon.
 
 ---
 

@@ -44,13 +44,25 @@ jobs:
 
       - name: 📦 download appimagetool
         run: |
+          # 🧰 appimagetool needs help from the system:
+          #    mksquashfs writes the image, "file" detects file types,
+          #    desktop-file-validate checks our .desktop file.
+          sudo apt-get install -y -qq squashfs-tools file desktop-file-utils
+
           cd /tmp
           wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
           chmod +x appimagetool-x86_64.AppImage
-          # 🧹 AppImage refuses to run as root, so we extract it and use the binary
+          # 🧹 an AppImage refuses to run as root in CI, so we unpack it and
+          #    take the real binary out of it
           ./appimagetool-x86_64.AppImage --appimage-extract > /dev/null 2>&1 || true
           sudo mv squashfs-root/usr/bin/appimagetool /usr/local/bin/appimagetool
           sudo chmod +x /usr/local/bin/appimagetool
+          # 🔧 KEY STEP: appimagetool looks for mksquashfs in its own ../lib
+          #    folder and NOT in PATH. Without this copy it dies with
+          #    "No such file or directory: .../lib/appimagekit/mksquashfs"
+          sudo mkdir -p /usr/local/lib/appimagekit
+          sudo cp "$(command -v mksquashfs)" /usr/local/lib/appimagekit/mksquashfs
+          appimagetool --version
 
       - name: 🔨 build the AppImage
         run: ./scripts/build_appimage.sh
