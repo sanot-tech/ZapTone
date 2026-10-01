@@ -37,7 +37,9 @@ command -v appimagetool >/dev/null || die "appimagetool not found.
 
 # ─── 🧹 clean staging ───
 rm -rf "$APPDIR"
-mkdir -p "$APPDIR/usr/lib" "$APPDIR/usr/share/applications" \
+# 📂 usr/bin нужен не только для красоты: appimagetool смотрит на структуру
+#    AppDir, и пустой usr/bin помогает ему определить архитектуру
+mkdir -p "$APPDIR/usr/lib" "$APPDIR/usr/bin" "$APPDIR/usr/share/applications" \
          "$APPDIR/usr/share/icons/hicolor/256x256/apps" \
          "$APPDIR/usr/share/metainfo" "$DIST"
 
@@ -93,7 +95,9 @@ fi
 # ─── 🔨 собираем ───
 OUT="$DIST/${APP_NAME}-${VERSION}-${ARCH}.AppImage"
 say "running appimagetool, this takes about 30 seconds…"
-appimagetool --no-appstream                      "$APPDIR" "$OUT"
+# ⚠️ appimagetool не умеет угадывать архитектуру, если в AppDir нет бинарей.
+#    Без ARCH= он печатает "Unable to guess the architecture" и выходит с кодом 1.
+ARCH="$ARCH" appimagetool --no-appstream           "$APPDIR" "$OUT"
 
 # ─── 🧹 уборка ───
 rm -rf "$APPDIR"
