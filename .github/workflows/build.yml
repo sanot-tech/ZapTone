@@ -80,6 +80,11 @@ jobs:
   windows:
     name: 🪟 Windows exe
     runs-on: windows-latest
+    env:
+      # 🪟 Кодировка консоли Windows по умолчанию cp1252, а в наших сообщениях
+      #    есть эмодзи. UTF-8 решает это на уровне всего шага.
+      PYTHONIOENCODING: utf-8
+      PYTHONUTF8: "1"
     steps:
       - name: 📥 get the code
         uses: actions/checkout@v4

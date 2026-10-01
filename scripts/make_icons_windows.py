@@ -19,6 +19,14 @@ import shutil
 import sys
 from pathlib import Path
 
+# 🪟 The Windows console uses cp1252 and cannot print emoji like 🎨.
+#    Without this the very first print() kills the whole build.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass  # 🧓 nothing to do on an older or already-fine stream
+
 ROOT = Path(__file__).resolve().parent.parent
 SVG = ROOT / "assets" / "icon.svg"
 OUT = ROOT / "assets" / "icons"

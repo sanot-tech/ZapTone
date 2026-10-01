@@ -26,6 +26,14 @@ import subprocess
 import sys
 from pathlib import Path
 
+# 🪟 Кто-то может запустить этот скрипт и на Windows, где консоль cp1252
+#    и не умеет печатать эмодзи. Без этой строки первый же print убьёт скрипт.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass  # 🧓 старый Python или поток, который уже в порядке
+
 # 📐 every size a Linux desktop or a Windows taskbar can ask for
 SIZES = (16, 22, 24, 32, 48, 64, 128, 256, 512, 1024)
 
