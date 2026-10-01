@@ -1,5 +1,10 @@
 <div align="center">
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/sanot-tech/social-preview/main/zaptone.png"
+       alt="ZapTone — turn any video into a clean MP3" width="100%">
+</p>
+
 ```
    ███████╗ █████╗ ██████╗ ████████╗ ██████╗ ███╗    ██╗███████╗
    ╚══██╔══╝██╔══██╗██╔══██╗╚══██╔══╝██╔═══██╗████╗  ██║██╔════╝

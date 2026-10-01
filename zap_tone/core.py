@@ -92,7 +92,8 @@ def audio_filter(options: Options) -> str | None:
 def build_command(job: Job) -> list[str]:
     """🛠️ Build the full ffmpeg command for one job. Pure function, easy to test."""
     opts = job.options
-    cmd: list[str] = [probe.check_tools()[0], "-hide_banner", "-nostdin", "-y"]
+    # 📍 ffmpeg_bin() не проверяет наличие ffmpeg: строить команду можно и без него
+    cmd: list[str] = [probe.ffmpeg_bin(), "-hide_banner", "-nostdin", "-y"]
 
     cover_ready = bool(job.cover_path and Path(job.cover_path).stat().st_size > 0)
 
@@ -131,7 +132,7 @@ def build_command(job: Job) -> list[str]:
 
 def grab_cover(job: Job) -> Path | None:
     """📸 Save one frame from the middle of the video to use as cover art."""
-    ffmpeg, _ = probe.check_tools()
+    ffmpeg = probe.ffmpeg_bin()
     tmp_dir = job.target.parent / f".zap_tone_{abs(hash(str(job.source)))}"
     tmp_dir.mkdir(parents=True, exist_ok=True)
     cover = tmp_dir / "cover.jpg"
@@ -176,6 +177,10 @@ def convert_job(job: Job) -> Job:
         if not Path(job.source).is_file():
             job.error = "file not found"
             return job
+        # 🛡️ check the tools only here, right before a real run.
+        # Building the command above works without ffmpeg, and that is how
+        # the unit tests stay fast on machines that have no ffmpeg at all.
+        probe.check_tools()
         if not probe.has_audio(job.source):
             job.error = "no audio track inside"
             return job

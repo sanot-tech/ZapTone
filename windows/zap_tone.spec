@@ -61,7 +61,10 @@ hiddenimports = [
 block_cipher = None   # 🗝️ PyInstaller 6 uses a different key name
 
 a = Analysis(
-    [str(ROOT / "zap_tone" / "__main__.py")],   # 🚀 entry point
+    [str(ROOT / "run_zaptone.py")],              # 🎯 not __main__.py!
+    #   PyInstaller runs the given file as a plain script, so the relative
+    #   imports inside zap_tone/__main__.py would fail. run_zaptone.py has
+    #   no relative imports, so it behaves the same in every situation.
     pathex=[str(ROOT)],                        # 📚 where to find our package
     binaries=collect_data_files("zap_tone"),   # 📦 any data inside the package
     datas=[],                                  # 📦 extra files (none right now)

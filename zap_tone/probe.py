@@ -41,6 +41,17 @@ def check_tools() -> tuple[str, str]:
     return ffmpeg, ffprobe
 
 
+def ffmpeg_bin() -> str:
+    """📍 Path to ffmpeg, or just the name if we cannot find it.
+
+    Why this is different from check_tools(): we use it while BUILDING a
+    command line, and building a command must work on a computer without
+    ffmpeg. Our tests rely on that, and CI runners have no ffmpeg either.
+    The real check happens in convert_job(), right before we run it.
+    """
+    return shutil.which("ffmpeg") or "ffmpeg"
+
+
 @lru_cache(maxsize=4096)
 def probe_json(path: str) -> dict:
     """📦 Read all stream info as JSON. Cached, because it never changes for a file."""
